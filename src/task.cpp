@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <utility>
 #include <cmath>
 #include <limits>
@@ -36,43 +37,120 @@ void readInputs2(const std::string& filePath, std::vector<double>& inputs)
     }
 }
 
+void readOutputs(const std::string& filename, std::vector<Angles>& data)
+{
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        throw std::runtime_error("Unable to open file: " + filename);
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string x_str, y_str;
+
+        // Разделяем строку по запятой
+        if (!std::getline(ss, x_str, ',') || !std::getline(ss, y_str)) {
+            throw std::runtime_error("Invalid file format");
+        }
+
+        try {
+            double x = std::stod(x_str);
+            double y = std::stod(y_str);
+            data.emplace_back(Angles{x, y});
+        } catch (const std::exception& e) {
+            throw std::runtime_error("Error parsing line: " + line);
+        }
+    }
+}
+
+// double calculateAngle(const Point& leftPoint, const Point& rightPoint) {
+//     double dx = rightPoint.x - leftPoint.x;  // Разница по x
+//     double dy = rightPoint.y - leftPoint.y; // Разница по y
+
+//     // atan2 автоматически учитывает знак dx и dy
+//     double angle = std::atan2(dy, dx); // Угол в радианах
+
+//     // Нормализация в диапазон [0, 2π)
+//     if (angle < 0) {
+//         angle += 2 * M_PI;
+//     }
+// }
+
+// double calculateAngle(const Point& leftPoint, const Point& rightPoint) {
+//     // double dx = rightPoint.x - leftPoint.x;  // Разница по x
+//     // double dy = rightPoint.y - leftPoint.y; // Разница по y
+
+//     // // atan2 автоматически учитывает знак dx и dy
+//     // double angle = std::atan2(dy, dx); // Угол в радианах
+
+//     // // Нормализация в диапазон [0, 2π)
+//     // if (angle < 0) {
+//     //     angle += 2 * M_PI;
+//     // }
+
+//     // return angle; // Угол в радианах
+
+//     // Векторы для прямых
+//     double v1x = rightPoint.x - leftPoint.x;
+//     double v1y = rightPoint.y - leftPoint.y;
+//     double v2x = rightPoint.x - leftPoint.x;
+//     double v2y = 0.0;
+
+//     // Скалярное произведение
+//     double dotProduct = v1x * v2x + v1y * v2y;
+
+//     // Длины векторов
+//     double lengthV1 = std::hypot(v1x, v1y);
+//     double lengthV2 = std::hypot(v2x, v2y);
+
+//     // Косинус угла
+//     double cosTheta = dotProduct / (lengthV1 * lengthV2);
+
+//     // Ограничиваем значение косинуса в диапазоне [-1, 1] для избежания ошибок из-за погрешностей
+//     cosTheta = std::clamp(cosTheta, -1.0, 1.0);
+
+//     // Вычисляем угол через арккосинус
+//     double angle = std::acos(cosTheta);
+
+//     return angle; // Угол в радианах
+// }
+
+// double calculateAngle(const Point& leftPoint, const Point& rightPoint) {
+//     // Разница координат для наклона прямой
+//     double dx = rightPoint.x - leftPoint.x;
+//     double dy = rightPoint.y - leftPoint.y;
+
+//     // Угол наклона прямой относительно горизонтальной оси
+//     double angle = std::atan2(dy, dx);
+
+//     // Нормализация угла в диапазон [-π/2, π/2]
+//     // if (angle > M_PI / 2) {
+//     //     angle -= M_PI;
+//     // } else if (angle < -M_PI / 2) {
+//     //     angle += M_PI;
+//     // }
+
+//     return angle; // Угол в радианах
+// }
+
 double calculateAngle(const Point& leftPoint, const Point& rightPoint) {
-    // double dx = rightPoint.x - leftPoint.x;  // Разница по x
-    // double dy = rightPoint.y - leftPoint.y; // Разница по y
+    // Разница координат для наклона прямой
+    double dx = rightPoint.x - leftPoint.x;
+    double dy = rightPoint.y - leftPoint.y;
 
-    // // atan2 автоматически учитывает знак dx и dy
-    // double angle = std::atan2(dy, dx); // Угол в радианах
+    // Угол наклона прямой относительно горизонтальной оси
+    double angle = std::atan2(dy, dx);
 
-    // // Нормализация в диапазон [0, 2π)
-    // if (angle < 0) {
-    //     angle += 2 * M_PI;
+    // Нормализация угла в диапазон [-π/2, π/2]
+    // if (angle > M_PI / 2) {
+    //     angle -= M_PI;
+    // } else if (angle < -M_PI / 2) {
+    //     angle += M_PI;
     // }
 
-    // return angle; // Угол в радианах
-
-    // Векторы для прямых
-    double v1x = rightPoint.x - leftPoint.x;
-    double v1y = rightPoint.y - leftPoint.y;
-    double v2x = rightPoint.x - leftPoint.x;
-    double v2y = 0.0;
-
-    // Скалярное произведение
-    double dotProduct = v1x * v2x + v1y * v2y;
-
-    // Длины векторов
-    double lengthV1 = std::hypot(v1x, v1y);
-    double lengthV2 = std::hypot(v2x, v2y);
-
-    // Косинус угла
-    double cosTheta = dotProduct / (lengthV1 * lengthV2);
-
-    // Ограничиваем значение косинуса в диапазоне [-1, 1] для избежания ошибок из-за погрешностей
-    cosTheta = std::clamp(cosTheta, -1.0, 1.0);
-
-    // Вычисляем угол через арккосинус
-    double angle = std::acos(cosTheta);
-
-    return angle; // Угол в радианах
+    return -angle; // Угол в радианах
 }
 
 // Comment
@@ -125,7 +203,7 @@ void processWindow(const std::vector<double>& inputs, int left, int right,
         const double currentY = inputs[i];
         if(currentY > currentMax){
             Point toCheck(static_cast<double>(i), inputs[i]);
-            if(isPointOutside(leftPoint, rightPoint, toCheck) >= 0){
+            if(isPointOutside(/*leftPoint*/maxPoint, rightPoint, toCheck) >= 0){
                 maxPoint = toCheck;
                 double alpha = calculateAngle(maxPoint, rightPoint);
                 result[right].alpha = std::max(alpha, result[right].alpha);
@@ -135,10 +213,10 @@ void processWindow(const std::vector<double>& inputs, int left, int right,
 
         if(currentY < currentMin){
             Point toCheck(static_cast<double>(i), inputs[i]);
-            if(isPointOutside(leftPoint, rightPoint, toCheck) <= 0){
+            if(isPointOutside(/*leftPoint*/minPoint, rightPoint, toCheck) <= 0){
                 minPoint = toCheck;
                 double beta = calculateAngle(minPoint, rightPoint);
-                result[right].beta = std::max(beta, result[right].beta); // ???
+                result[right].beta = std::min(beta, result[right].beta); // ???
             }
             // currentMin = inputs[i];
         }
@@ -164,8 +242,9 @@ void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, i
     //      recalcAngles(inputs, std::make_pair(i, i + 1), std::make_pair(i - window, i - window + 1), result);
     //  }
 
+    result.resize(inputs.size());
     for(int i = 0; i < inputs.size(); i++){
-        int left = std::max(0, i - window);
+        int left = std::max(0, i - window + 1);
         int right = i;
         processWindow(inputs, left, right, result);
     }

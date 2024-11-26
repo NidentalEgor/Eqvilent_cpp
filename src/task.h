@@ -1,10 +1,11 @@
 #include <string>
+#include <limits>
 
 #pragma once
 
 struct Angles {
-    double alpha = 0.0;
-    double beta = 0.0;
+    double alpha = -std::numeric_limits<double>::max();
+    double beta = std::numeric_limits<double>::max();
 };
 
 struct Point {
@@ -31,5 +32,8 @@ double calculateAngle(const Point& leftPoint, const Point& rightPoint);
 
 void readInputs2(const std::string& filePath, std::vector<double>& inputs);
 
+void readOutputs(const std::string& filename, std::vector<Angles>& data);
+
 void Process(const std::vector<double>& input, std::vector<std::pair<double, double>>& output);
  
+ void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, int window);
