@@ -1,0 +1,56 @@
+{
+    // "tasks": [
+    //     {
+    //         "type": "shell",
+    //         "label": "C/C++: clang++ build active file",
+    //         "command": "/usr/bin/clang++",
+    //         "args": [
+    //             "-g",
+    //             "-std=c++20", // Добавляем стандарт языка
+    //             "${workspaceFolder}/src/*.cpp", // Собираем все .cpp файлы в папке src
+    //             "-I/Users/egornidental/Repositories/Eqvilent_cpp/build/Debug/_deps/googletest-src/googletest/include",  // Путь к заголовочным файлам Google Test
+    //             "-o",
+    //             "${workspaceFolder}/build/Eqvilent", // Выходной файл
+    //             "-L${workspaceFolder}/build/Debug/lib", // Путь к библиотекам Google Test
+    //             "-lgtest", // Ссылка на libgtest
+    //             "-lgtest_main" // Ссылка на libgtest_main
+    //         ],
+    //         "options": {
+    //             "cwd": "${workspaceFolder}"
+    //         },
+    //         "problemMatcher": [
+    //             "$gcc"
+    //         ],
+    //         "group": {
+    //             "kind": "build",
+    //             "isDefault": true
+    //         }
+    //     }
+    // ],
+    // "version": "2.0.0"
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Build Tests", // Название задачи, совпадает с preLaunchTask
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-g",
+                "-std=c++20",
+                "${workspaceFolder}/tests/tests.cpp",
+                "${workspaceFolder}/src/task.cpp",
+                "-I${workspaceFolder}/build/Debug/_deps/googletest-src/googletest/include",
+                "-L${workspaceFolder}/build/Debug/lib",
+                "-lgtest",
+                "-lgtest_main",
+                "-o",
+                "${workspaceFolder}/build/bin/tests" // Путь к тестовому исполняемому файлу
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": ["$gcc"]
+        }
+    ],
+    "version": "2.0.0"
+}
