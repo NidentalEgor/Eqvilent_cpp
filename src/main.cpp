@@ -1,19 +1,17 @@
-#include "task.h"
+#include "solution.h"
+
 #include <vector>
 #include <iostream>
 #include <utility>
 
 int main() {
     std::vector<double> input;
-    input.push_back(11384.96);
-    input.push_back(11373.01);
-    std::vector<std::pair<double, double>> output;
-    // readInputs2("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", inputs)
-    Process(input, output);
+    readInputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", input);
 
-    for(const auto& angles : output){
-        std::cout << "alpha = " << angles.first << " beta = " << angles.second << std::endl;
-    }
+    std::vector<Angles> output;
+    calculate(input, output, 10);
+
+    writeOutput("/Users/egornidental/Repositories/Eqvilent_cpp/data/result_window_10.csv", output);
 
     return 0;
 }

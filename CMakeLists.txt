@@ -16,7 +16,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 file(GLOB SRC_FILES src/*.cpp)
 
 # Добавляем основное приложение
-add_executable(main ${SRC_FILES})
+add_executable(solution ${SRC_FILES})
 
 # Google Test
 include(FetchContent)
@@ -31,7 +31,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # Тестовый исполняемый файл
-add_executable(tests tests/tests.cpp src/task.cpp)
+add_executable(tests tests/tests.cpp tests/main.cpp src/solution.cpp)
 
 # Линковка тестов с Google Test
 target_link_libraries(tests gtest gtest_main)
