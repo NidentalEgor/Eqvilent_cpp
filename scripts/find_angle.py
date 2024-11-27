@@ -37,7 +37,6 @@ def angle_between_segments(A, B, C, D):
     
     return theta_deg
 
-print("123")
 # Пример точек
 A = (0, 11384.96)
 B = (1, 11373.01)

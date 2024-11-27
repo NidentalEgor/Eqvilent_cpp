@@ -36,9 +36,8 @@ void writeOutput(const std::string& filePath, std::vector<Angles>& output){
         throw std::runtime_error("Unable to open file: " + filePath);
     }
 
-    // Write each pair of alpha and beta values to the file
     for (const auto& angles : output) {
-        outFile << std::fixed << std::setprecision(5) // Set precision to 5 decimal places
+        outFile << std::fixed << std::setprecision(5)
                 << angles.alpha << "," << angles.beta << "\n";
     }
 }
@@ -113,6 +112,7 @@ void processWindow(const std::vector<double>& inputs, int left, int right,
     }
 }
 
+// Calculates the angles alpha and beta for each window in inputs of size window
 void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, int window)
 {
     result.resize(inputs.size());

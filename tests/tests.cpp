@@ -30,7 +30,7 @@ void readOutputs(const std::string& filename, std::vector<Angles>& data)
     }
 }
 
-TEST(Tests, RealDataTest1) {
+TEST(RealDataTest, FirstTwoPoints) {
     std::vector<double> input;
     input.push_back(11384.96);
     input.push_back(11373.01);
@@ -47,7 +47,7 @@ TEST(Tests, RealDataTest1) {
     }
 }
 
-TEST(Tests, RealDataTest2) {
+TEST(RealDataTest, FirstThreePoints) {
     std::vector<double> input;
     input.push_back(11384.96);
     input.push_back(11373.01);
@@ -65,7 +65,7 @@ TEST(Tests, RealDataTest2) {
     }
 }
 
-TEST(Tests, RealDataTestAllWindow10) {
+TEST(RealDataTest, Window10) {
     std::vector<double> input;
     readInputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", input);
 
@@ -90,7 +90,7 @@ TEST(Tests, RealDataTestAllWindow10) {
     }
 }
 
-TEST(Tests, RealDataTestAllWindow100) {
+TEST(RealDataTest, Window100) {
     std::vector<double> input;
     readInputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", input);
 
@@ -113,7 +113,7 @@ TEST(Tests, RealDataTestAllWindow100) {
     }
 }
 
-TEST(Tests, RealDataTestAllWindow1000) {
+TEST(RealDataTest, Window1000) {
     std::vector<double> input;
     readInputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", input);
 
@@ -136,16 +136,16 @@ TEST(Tests, RealDataTestAllWindow1000) {
     }
 }
 
-TEST(CalculateAngleTests, DISABLED_Test1) {
-    const Point leftPoint(0.0, 1.0);
-    const Point rightPoint(1.0, 0.0);
-    double angle = calculateAngle(leftPoint, rightPoint);
-    EXPECT_NEAR(angle, -0.785398, 1e-5);
-}
-
-TEST(CalculateAngleTests, DISABLED_Test2) {
-    const Point leftPoint(0.0, -1.0);
-    const Point rightPoint(1.0, 0.0);
+TEST(CalculateAngleTests, Test1) {
+    const Point leftPoint(-1.0, 1.0);
+    const Point rightPoint(0.0, 0.0);
     double angle = calculateAngle(leftPoint, rightPoint);
     EXPECT_NEAR(angle, 0.785398, 1e-5);
+}
+
+TEST(CalculateAngleTests, Test2) {
+    const Point leftPoint(-1.0, -1.0);
+    const Point rightPoint(0.0, 0.0);
+    double angle = calculateAngle(leftPoint, rightPoint);
+    EXPECT_NEAR(angle, -0.785398, 1e-5);
 }
