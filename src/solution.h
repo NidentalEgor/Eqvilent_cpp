@@ -4,25 +4,25 @@
 #pragma once
 
 struct Angles {
-    double alpha = -std::numeric_limits<double>::max();
-    double beta = std::numeric_limits<double>::max();
+    double alpha{0.0};
+    double beta{0.0};
 };
 
 struct Point {
     Point(double _x, double _y) :
         x(_x), y(_y){}
 
-    // Point(const Point& other){
-    //     x = other.x;
-    //     y = other.y;
-    // }
+    Point(const Point& other){
+        x = other.x;
+        y = other.y;
+    }
 
-    // const Point& operator=(const Point& other){
-    //     x = other.x;
-    //     y = other.y;
+    const Point& operator=(const Point& other){
+        x = other.x;
+        y = other.y;
 
-    //     return *this;
-    // }
+        return *this;
+    }
 
     double x = 0.0;
     double y = 0.0;

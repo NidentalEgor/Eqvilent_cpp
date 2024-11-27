@@ -37,8 +37,7 @@ void writeOutput(const std::string& filePath, std::vector<Angles>& output){
     }
 
     for (const auto& angles : output) {
-        outFile << std::fixed << std::setprecision(5)
-                << angles.alpha << "," << angles.beta << "\n";
+        outFile << std::fixed << std::setprecision(5) << angles.alpha << "," << angles.beta << "\n";
     }
 }
 
@@ -81,33 +80,19 @@ void processWindow(const std::vector<double>& inputs, int left, int right,
         return;
     }
 
-    Point leftPoint(static_cast<double>(right - 1), inputs[right - 1]);
     Point rightPoint(static_cast<double>(right), inputs[right]);
-
-    double currentMax = /*inputs[right];*/std::numeric_limits<double>::min();
-    double currentMin = /*inputs[right];*/std::numeric_limits<double>::max();
-    Point maxPoint(static_cast<double>(right), std::numeric_limits<double>::min());
-    Point minPoint(static_cast<double>(right), std::numeric_limits<double>::max());
+    Point leftPointAlpha(static_cast<double>(right), -std::numeric_limits<double>::max());
+    Point leftPointBeta(static_cast<double>(right), std::numeric_limits<double>::max());
     for(int i = right - 1; i >= left; i--){
-        const double currentY = inputs[i];
-        if(currentY > currentMax){
-            Point toCheck(static_cast<double>(i), inputs[i]);
-            if(classifyPointPosition(/*leftPoint*/maxPoint, rightPoint, toCheck) >= 0){
-                maxPoint = toCheck;
-                double alpha = calculateAngle(maxPoint, rightPoint);
-                result[right].alpha = std::max(alpha, result[right].alpha);
-            }
-            // currentMax = inputs[i];
+        const Point toCheck(static_cast<double>(i), inputs[i]);
+        if(classifyPointPosition(leftPointAlpha, rightPoint, toCheck) >= 0){
+            leftPointAlpha = toCheck;
+            result[right].alpha = calculateAngle(leftPointAlpha, rightPoint);
         }
 
-        if(currentY < currentMin){
-            Point toCheck(static_cast<double>(i), inputs[i]);
-            if(classifyPointPosition(/*leftPoint*/minPoint, rightPoint, toCheck) <= 0){
-                minPoint = toCheck;
-                double beta = calculateAngle(minPoint, rightPoint);
-                result[right].beta = std::min(beta, result[right].beta);
-            }
-            // currentMin = inputs[i];
+        if(classifyPointPosition(leftPointBeta, rightPoint, toCheck) <= 0){
+            leftPointBeta = toCheck;
+            result[right].beta = calculateAngle(leftPointBeta, rightPoint);
         }
     }
 }

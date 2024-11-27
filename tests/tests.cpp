@@ -136,16 +136,24 @@ TEST(RealDataTest, Window1000) {
     }
 }
 
-TEST(CalculateAngleTests, Test1) {
+TEST(CalculateAngleTests, UnitCircleSecondQuadrant) {
     const Point leftPoint(-1.0, 1.0);
     const Point rightPoint(0.0, 0.0);
     double angle = calculateAngle(leftPoint, rightPoint);
     EXPECT_NEAR(angle, 0.785398, 1e-5);
 }
 
-TEST(CalculateAngleTests, Test2) {
+TEST(CalculateAngleTests, UnitCircleThirdQuadrant) {
     const Point leftPoint(-1.0, -1.0);
     const Point rightPoint(0.0, 0.0);
     double angle = calculateAngle(leftPoint, rightPoint);
     EXPECT_NEAR(angle, -0.785398, 1e-5);
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+
+    ::testing::GTEST_FLAG(break_on_failure) = true;
+
+    return RUN_ALL_TESTS();
 }

@@ -31,7 +31,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 # Тестовый исполняемый файл
-add_executable(tests tests/tests.cpp tests/main.cpp src/solution.cpp)
+add_executable(tests tests/tests.cpp src/solution.cpp)
 
 # Линковка тестов с Google Test
 target_link_libraries(tests gtest gtest_main)
