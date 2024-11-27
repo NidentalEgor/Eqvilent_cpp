@@ -1,4 +1,3 @@
-#include "solution.h"
 
 #include <vector>
 #include <iostream>
@@ -8,6 +7,31 @@
 #include <utility>
 #include <cmath>
 #include <limits>
+
+struct Angles {
+    double alpha{0.0};
+    double beta{0.0};
+};
+
+struct Point {
+    Point(double _x, double _y) :
+        x(_x), y(_y){}
+
+    Point(const Point& other){
+        x = other.x;
+        y = other.y;
+    }
+
+    const Point& operator=(const Point& other){
+        x = other.x;
+        y = other.y;
+
+        return *this;
+    }
+
+    double x = 0.0;
+    double y = 0.0;
+};
 
 void readInput(const std::string& filePath, std::vector<double>& inputs)
 {
@@ -107,4 +131,15 @@ void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, i
         processWindow(inputs, left, right, result);
     }
 }
- 
+
+int main() {
+    std::vector<double> input;
+    readInput("data/input.csv", input);
+
+    std::vector<Angles> output;
+    calculate(input, output, 10);
+
+    writeOutput("data/result_window_10.csv", output);
+
+    return 0;
+}

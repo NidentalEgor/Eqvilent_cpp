@@ -30,7 +30,7 @@ struct Point {
 
 double calculateAngle(const Point& leftPoint, const Point& rightPoint);
 
-void readInputs(const std::string& filePath, std::vector<double>& inputs);
+void readInput(const std::string& filePath, std::vector<double>& inputs);
 
 void writeOutput(const std::string& filePath, std::vector<Angles>& output);
 

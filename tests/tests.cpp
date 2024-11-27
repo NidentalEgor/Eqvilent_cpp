@@ -67,7 +67,7 @@ TEST(RealDataTest, FirstThreePoints) {
 
 TEST(RealDataTest, Window10) {
     std::vector<double> input;
-    readInputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", input);
+    readInput("../../../data/input.csv", input);
 
     std::vector<Angles> output;
     calculate(input, output, 10);
@@ -76,7 +76,7 @@ TEST(RealDataTest, Window10) {
 
     std::vector<Angles> expected;
     expected.reserve(input.size());
-    readOutputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/window_10.csv", expected);
+    readOutputs("../../../data/window_10.csv", expected);
 
     ASSERT_EQ(expected.size(), output.size());
     for(int i = 0; i < output.size(); i++){
@@ -92,14 +92,14 @@ TEST(RealDataTest, Window10) {
 
 TEST(RealDataTest, Window100) {
     std::vector<double> input;
-    readInputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", input);
+    readInput("../../../data/input.csv", input);
 
     std::vector<Angles> output;
     calculate(input, output, 100);
 
     std::vector<Angles> expected;
     expected.reserve(input.size());
-    readOutputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/window_100.csv", expected);
+    readOutputs("../../../data/window_100.csv", expected);
 
     ASSERT_EQ(expected.size(), output.size());
     for(int i = 0; i < output.size(); i++){
@@ -115,14 +115,14 @@ TEST(RealDataTest, Window100) {
 
 TEST(RealDataTest, Window1000) {
     std::vector<double> input;
-    readInputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv", input);
+    readInput("../../../data/input.csv", input);
 
     std::vector<Angles> output;
     calculate(input, output, 1000);
 
     std::vector<Angles> expected;
     expected.reserve(input.size());
-    readOutputs("/Users/egornidental/Repositories/Eqvilent_cpp/data/window_1000.csv", expected);
+    readOutputs("../../../data/window_1000.csv", expected);
 
     ASSERT_EQ(expected.size(), output.size());
     for(int i = 0; i < output.size(); i++){
