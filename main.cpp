@@ -146,15 +146,15 @@ void processWindow(const std::vector<double>& inputs, const int windowLeftIndex,
     int& prevWindowLeftAnchorPointIndexAlpha, int& prevWindowLeftAnchorPointIndexBeta, Angles& angles)
 {
     if(windowLeftIndex > windowRightIndex) {
-        throw std::runtime_error("Invalid window borders");
+        throw std::runtime_error("Invalid window borders [" + std::to_string(windowLeftIndex) + ", " + std::to_string(windowRightIndex) + "]");
     }
 
     if(prevWindowLeftAnchorPointIndexAlpha < 0 || prevWindowLeftAnchorPointIndexAlpha >= inputs.size()) {
-        throw std::runtime_error("Invalid index for prevWindowLeftAnchorPointIndexAlpha.");
+        throw std::runtime_error("Invalid index for prevWindowLeftAnchorPointIndexAlpha for window [" + std::to_string(windowLeftIndex) + ", " + std::to_string(windowRightIndex) + "]");
     }
 
     if(prevWindowLeftAnchorPointIndexBeta < 0 || prevWindowLeftAnchorPointIndexBeta >= inputs.size()) {
-        throw std::runtime_error("Invalid index for prevWindowLeftAnchorPointIndexBeta.");
+        throw std::runtime_error("Invalid index for prevWindowLeftAnchorPointIndexBeta for window [" + std::to_string(windowLeftIndex) + ", " + std::to_string(windowRightIndex) + "]");
     }
 
     const int prevWindowRightIndex = windowRightIndex - 1;
