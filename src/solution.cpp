@@ -52,6 +52,11 @@ void writeOutput(const std::string& filePath, const std::vector<Angles>& output)
 double calculateAngle(const Point& leftPoint, const Point& rightPoint)
 {
     const double dx = rightPoint.x - leftPoint.x;
+
+    if (std::fabs(dx) < std::numeric_limits<double>::epsilon()) {
+        throw std::runtime_error("Division by zero in calculateAngle.");
+    }
+
     const double dy = rightPoint.y - leftPoint.y;
     const double angle = std::atan2(dy, dx);
     // invert the sign so that the angle above the horizontal axis is positive
@@ -98,6 +103,20 @@ std::pair<double, int> recalcAngleForWindow(const std::vector<double>& inputs,
     return {angle, anchorPointIndex};
 }
 
+// Calculates the maximum angle Alpha for lines passing through the rightPoint and one of the points in the window [left, right]
+std::pair<double, int> recalcAlphaForWindow(const std::vector<double>& inputs,
+    int left, int right, const Point& rightPoint)
+{
+     return recalcAngleForWindow(inputs, left, right, rightPoint, true);
+}
+
+// Calculates the maximum angle Beta for lines passing through the rightPoint and one of the points in the window [left, right]
+std::pair<double, int> recalcBetaForWindow(const std::vector<double>& inputs,
+    int left, int right, const Point& rightPoint)
+{
+     return recalcAngleForWindow(inputs, left, right, rightPoint, false);
+}
+
 // Calculates angles alpha and beta for window [left, right]
 void processWindow(const std::vector<double>& inputs, const int windowLeftIndex, const int windowRightIndex,
     int& prevWindowLeftAnchorPointIndexAlpha, int& prevWindowLeftAnchorPointIndexBeta, Angles& angles)
@@ -127,7 +146,9 @@ void processWindow(const std::vector<double>& inputs, const int windowLeftIndex,
         // Otherwise, we need to check some or all points in the window. If the left anchor point of the previous tangent is still
         // within the window, only the points to its left need to be checked.
         const int optimizedRightWindowIndex = prevWindowLeftAnchorPointIndexAlpha >= windowLeftIndex ? prevWindowLeftAnchorPointIndexAlpha : windowRightIndex - 1;
-        std::tie(angles.alpha, prevWindowLeftAnchorPointIndexAlpha) = recalcAngleForWindow(inputs, windowLeftIndex, optimizedRightWindowIndex, rightPoint, true);
+        const std::pair<double, int> result = recalcAlphaForWindow(inputs, windowLeftIndex, optimizedRightWindowIndex, rightPoint);
+        angles.alpha = result.first;
+        prevWindowLeftAnchorPointIndexAlpha = result.second;
     }
 
     const Point prevStepLeftPointBeta(static_cast<double>(prevWindowLeftAnchorPointIndexBeta), inputs[prevWindowLeftAnchorPointIndexBeta]);
@@ -139,7 +160,9 @@ void processWindow(const std::vector<double>& inputs, const int windowLeftIndex,
         // Otherwise, we need to check some or all points in the window. If the left anchor point of the previous tangent is still
         // within the window, only the points to its left need to be checked.
         const int optimizedRightWindowIndex = prevWindowLeftAnchorPointIndexBeta >= windowLeftIndex ? prevWindowLeftAnchorPointIndexBeta : windowRightIndex - 1;
-        std::tie(angles.beta, prevWindowLeftAnchorPointIndexBeta) = recalcAngleForWindow(inputs, windowLeftIndex, optimizedRightWindowIndex, rightPoint, false);
+        const std::pair<double, int> result = recalcBetaForWindow(inputs, windowLeftIndex, optimizedRightWindowIndex, rightPoint);
+        angles.beta = result.first;
+        prevWindowLeftAnchorPointIndexBeta = result.second;
     }
 }
 
@@ -151,7 +174,7 @@ void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, i
     }
 
     if(window <= 0) {
-        throw std::runtime_error("Window size less then zero");
+        throw std::runtime_error("Window size must be greater than zero");
     }
     
     result.resize(inputs.size());
