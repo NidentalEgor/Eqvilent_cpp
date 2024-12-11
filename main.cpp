@@ -170,8 +170,12 @@ void processWindow(const std::vector<double>& inputs, const int windowLeftIndex,
 // Calculates the angles alpha and beta for each window in inputs of size window
 void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, int window)
 {
+    if (inputs.empty()) {
+        throw std::runtime_error("Input data is empty.");
+    }
+
     if(window <= 0) {
-        throw std::runtime_error("Invalid window size");
+        throw std::runtime_error("Window size less then zero");
     }
     
     result.resize(inputs.size());
@@ -186,7 +190,6 @@ void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, i
         processWindow(inputs, left, right, prevWindowLeftAnchorPointIndexAlpha, prevWindowLeftAnchorPointIndexBeta, result[right]);
     }
 }
- 
 
 int main() {
     try{
