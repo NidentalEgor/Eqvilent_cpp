@@ -10,3 +10,7 @@ The second method runs tests for all three window size options for which there a
 ./build.sh [Debug/Release]
 cd build/[Debug/Release]/bin
 ./tests
+
+Notes:  
+1. The files `main.cpp` and `src/solution.cpp` contain identical code for computations.  
+2. The solution was not implemented as a class because the provided template in the technical task did not require it.

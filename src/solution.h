@@ -32,6 +32,6 @@ double calculateAngle(const Point& leftPoint, const Point& rightPoint);
 
 void readInput(const std::string& filePath, std::vector<double>& inputs);
 
-void writeOutput(const std::string& filePath, std::vector<Angles>& output);
+void writeOutput(const std::string& filePath, const std::vector<Angles>& output);
 
 void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, int window);

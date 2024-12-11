@@ -9,6 +9,8 @@
 #include <cmath>
 #include <limits>
 
+static constexpr int NotFound = -1;
+
 void readInput(const std::string& filePath, std::vector<double>& inputs)
 {
     std::ifstream file(filePath);
@@ -23,13 +25,17 @@ void readInput(const std::string& filePath, std::vector<double>& inputs)
         try {
             inputs.push_back(std::stod(line));
         } catch (const std::invalid_argument &e) {
-            std::cerr << "Invalid line # " << lineIndex << " format in file: " << line << "\n";
+            throw std::runtime_error("Parsing error at line " + std::to_string(lineIndex) + ": " + line);
         }
         lineIndex++;
     }
+
+    if (inputs.empty()) {
+        throw std::runtime_error("Input data is empty.");
+    }
 }
 
-void writeOutput(const std::string& filePath, std::vector<Angles>& output)
+void writeOutput(const std::string& filePath, const std::vector<Angles>& output)
 {
     std::ofstream outFile(filePath);
     
@@ -69,66 +75,71 @@ int classifyPointPosition(const Point& point1, const Point& point2, const Point&
     }
 }
 
-void fullRecalcAlpha(const std::vector<double>& inputs, int left, int right, const Point& rightPoint,
-    int& prevStepLeftPointIndexAlpha, std::vector<Angles>& result)
+// Calculates the maximum angle Alpha or Beta for lines passing through the rightPoint and one of the points in the window [left, right]
+std::pair<double, int> recalcAngleForWindow(const std::vector<double>& inputs,
+    int left, int right, const Point& rightPoint, const bool isAlpha)
 {
-    // if(left == 0){
-    //     std::cout << "Full recalc window[" << left << ", " << right << "]. Left border = " << left << " right border = " << rightPoint.x << " prevStepLeftPointIndexAlpha = " << prevStepLeftPointIndexAlpha << std::endl;
-    // }
-    Point leftPointAlpha(static_cast<double>(right), -std::numeric_limits<double>::max());
-    for(int i = right - 1; i >= left; i--){
+    double angle = 0.0;
+    int anchorPointIndex = NotFound;
+
+    Point leftAnchorPoint(static_cast<double>(right),
+        isAlpha ? -std::numeric_limits<double>::max() : std::numeric_limits<double>::max());
+
+    for(int i = right; i >= left; i--){
         const Point toCheck(static_cast<double>(i), inputs[i]);
-        if(classifyPointPosition(leftPointAlpha, rightPoint, toCheck) >= 0){
-            leftPointAlpha = toCheck;
-            prevStepLeftPointIndexAlpha = i;
-            result[right].alpha = calculateAngle(leftPointAlpha, rightPoint);
+        const int classificationResult = classifyPointPosition(leftAnchorPoint, rightPoint, toCheck);
+        if((isAlpha && classificationResult >= 0) || (!isAlpha && classificationResult <= 0)) {
+            leftAnchorPoint = toCheck;
+            anchorPointIndex = i;
+            angle = calculateAngle(leftAnchorPoint, rightPoint);
         }
     }
+
+    return {angle, anchorPointIndex};
 }
 
-void fullRecalcBeta(const std::vector<double>& inputs, int left, int right,
-    int& prevStepLeftPointIndexBeta, std::vector<Angles>& result)
+// Calculates angles alpha and beta for window [left, right]
+void processWindow(const std::vector<double>& inputs, const int windowLeftIndex, const int windowRightIndex,
+    int& prevWindowLeftAnchorPointIndexAlpha, int& prevWindowLeftAnchorPointIndexBeta, Angles& angles)
 {
-    Point rightPoint(static_cast<double>(right), inputs[right]);
-    Point leftPointBeta(static_cast<double>(right), std::numeric_limits<double>::max());
-    for(int i = right - 1; i >= left; i--){
-        const Point toCheck(static_cast<double>(i), inputs[i]);
-        if(classifyPointPosition(leftPointBeta, rightPoint, toCheck) <= 0){
-            leftPointBeta = toCheck;
-            prevStepLeftPointIndexBeta = i;
-            result[right].beta = calculateAngle(leftPointBeta, rightPoint);
-        }
-    }
-}
-
-// Calculates angles alpha and beta for the position of right based on the values [inputs[left], inputs[right]]
-void processWindow(const std::vector<double>& inputs, int left, int right,
-    int& prevStepLeftPointIndexAlpha, int& prevStepLeftPointIndexBeta,
-    std::vector<Angles>& result)
-{
-    if(left > right) {
+    if(windowLeftIndex > windowRightIndex) {
         throw std::runtime_error("Invalid window borders");
     }
 
-    const int prevStepRightIndex = right - 1;
-    const Point prevStepRightPoint(static_cast<double>(prevStepRightIndex), inputs[prevStepRightIndex]);
-    Point rightPoint(static_cast<double>(right), inputs[right]);
-
-    const Point prevStepLeftPointAlpha(static_cast<double>(prevStepLeftPointIndexAlpha), inputs[prevStepLeftPointIndexAlpha]);
-    if(classifyPointPosition(prevStepLeftPointAlpha, prevStepRightPoint, rightPoint) < 0) {
-        result[right].alpha = calculateAngle(prevStepRightPoint, rightPoint);
-        prevStepLeftPointIndexAlpha = prevStepRightIndex;
-    } else {
-        // const int rightBorder = prevStepLeftPointIndexAlpha >= left ? prevStepLeftPointIndexAlpha + 1 : right;
-        fullRecalcAlpha(inputs, left, /*rightBorder*/right, rightPoint, prevStepLeftPointIndexAlpha, result);
+    if(prevWindowLeftAnchorPointIndexAlpha < 0 || prevWindowLeftAnchorPointIndexAlpha >= inputs.size()) {
+        throw std::runtime_error("Invalid index for prevWindowLeftAnchorPointIndexAlpha.");
     }
 
-    const Point prevStepLeftPointBeta(static_cast<double>(prevStepLeftPointIndexBeta), inputs[prevStepLeftPointIndexBeta]);
-    if(classifyPointPosition(prevStepLeftPointBeta, prevStepRightPoint, rightPoint) > 0) {
-        result[right].beta = calculateAngle(prevStepRightPoint, rightPoint);
-        prevStepLeftPointIndexBeta = prevStepRightIndex;
+    if(prevWindowLeftAnchorPointIndexBeta < 0 || prevWindowLeftAnchorPointIndexBeta >= inputs.size()) {
+        throw std::runtime_error("Invalid index for prevWindowLeftAnchorPointIndexBeta.");
+    }
+
+    const int prevWindowRightIndex = windowRightIndex - 1;
+    const Point prevWindowRightPoint(static_cast<double>(prevWindowRightIndex), inputs[prevWindowRightIndex]);
+    const Point rightPoint(static_cast<double>(windowRightIndex), inputs[windowRightIndex]);
+
+    const Point prevStepLeftPointAlpha(static_cast<double>(prevWindowLeftAnchorPointIndexAlpha), inputs[prevWindowLeftAnchorPointIndexAlpha]);
+    if(classifyPointPosition(prevStepLeftPointAlpha, prevWindowRightPoint, rightPoint) < 0) {
+        // If current last point is below the previous tangent, the new tangent will pass through the last two points of the window
+        angles.alpha = calculateAngle(prevWindowRightPoint, rightPoint);
+        prevWindowLeftAnchorPointIndexAlpha = prevWindowRightIndex;
     } else {
-        fullRecalcBeta(inputs, left, right, prevStepLeftPointIndexBeta, result);
+        // Otherwise, we need to check some or all points in the window. If the left anchor point of the previous tangent is still
+        // within the window, only the points to its left need to be checked.
+        const int optimizedRightWindowIndex = prevWindowLeftAnchorPointIndexAlpha >= windowLeftIndex ? prevWindowLeftAnchorPointIndexAlpha : windowRightIndex - 1;
+        std::tie(angles.alpha, prevWindowLeftAnchorPointIndexAlpha) = recalcAngleForWindow(inputs, windowLeftIndex, optimizedRightWindowIndex, rightPoint, true);
+    }
+
+    const Point prevStepLeftPointBeta(static_cast<double>(prevWindowLeftAnchorPointIndexBeta), inputs[prevWindowLeftAnchorPointIndexBeta]);
+    if(classifyPointPosition(prevStepLeftPointBeta, prevWindowRightPoint, rightPoint) > 0) {
+        // If current last point is above the previous tangent, the new tangent will pass through the last two points of the window
+        angles.beta = calculateAngle(prevWindowRightPoint, rightPoint);
+        prevWindowLeftAnchorPointIndexBeta = prevWindowRightIndex;
+    } else {
+        // Otherwise, we need to check some or all points in the window. If the left anchor point of the previous tangent is still
+        // within the window, only the points to its left need to be checked.
+        const int optimizedRightWindowIndex = prevWindowLeftAnchorPointIndexBeta >= windowLeftIndex ? prevWindowLeftAnchorPointIndexBeta : windowRightIndex - 1;
+        std::tie(angles.beta, prevWindowLeftAnchorPointIndexBeta) = recalcAngleForWindow(inputs, windowLeftIndex, optimizedRightWindowIndex, rightPoint, false);
     }
 }
 
@@ -143,15 +154,12 @@ void calculate(const std::vector<double>& inputs, std::vector<Angles>& result, i
     result.front().alpha = 0.0;
     result.front().beta = 0.0;
 
-    int prevStepLeftPointIndexAlpha = -1;
-    int prevStepLeftPointIndexBeta = -1;
+    int prevWindowLeftAnchorPointIndexAlpha = 0;
+    int prevWindowLeftAnchorPointIndexBeta = 0;
     for(int i = 1; i < inputs.size(); i++) {
-        if(i < 10){
-            std::cout << "window #" << i << std::endl;
-        }
         int left = std::max(0, i - window + 1);
         int right = i;
-        processWindow(inputs, left, right, prevStepLeftPointIndexAlpha, prevStepLeftPointIndexBeta, result);
+        processWindow(inputs, left, right, prevWindowLeftAnchorPointIndexAlpha, prevWindowLeftAnchorPointIndexBeta, result[right]);
     }
 }
  
