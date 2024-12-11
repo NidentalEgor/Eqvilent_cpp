@@ -9,7 +9,7 @@ parser.add_argument("end", type=int, help="Конец диапазона по X 
 args = parser.parse_args()
 
 # Данные
-df = pd.read_csv('/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv', header=None, names=['alpha', 'beta'])
+df = pd.read_csv('/Users/egornidental/Repositories/Eqvilent_cpp/data/input.csv', header=None, names=['Y'])
 print(df.head())
 print(df.describe())
 

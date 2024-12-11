@@ -85,8 +85,8 @@ TEST(RealDataTest, Window10) {
         const double expectedAlpha = expected[i].alpha;
         const double expectedBeta = expected[i].beta;
 
-        EXPECT_NEAR(outputAlpha, expectedAlpha, 1e-5);
-        EXPECT_NEAR(outputBeta, expectedBeta, 1e-5);
+        EXPECT_NEAR(outputAlpha, expectedAlpha, 1e-5) << "element #" << i;
+        EXPECT_NEAR(outputBeta, expectedBeta, 1e-5) << "element #" << i;
     }
 }
 
@@ -108,8 +108,8 @@ TEST(RealDataTest, Window100) {
         const double expectedAlpha = expected[i].alpha;
         const double expectedBeta = expected[i].beta;
 
-        EXPECT_NEAR(outputAlpha, expectedAlpha, 1e-5);
-        EXPECT_NEAR(outputBeta, expectedBeta, 1e-5);
+        EXPECT_NEAR(outputAlpha, expectedAlpha, 1e-5) << "element #" << i;
+        EXPECT_NEAR(outputBeta, expectedBeta, 1e-5) << "element #" << i;
     }
 }
 
@@ -131,8 +131,8 @@ TEST(RealDataTest, Window1000) {
         const double expectedAlpha = expected[i].alpha;
         const double expectedBeta = expected[i].beta;
 
-        EXPECT_NEAR(outputAlpha, expectedAlpha, 1e-5);
-        EXPECT_NEAR(outputBeta, expectedBeta, 1e-5);
+        EXPECT_NEAR(outputAlpha, expectedAlpha, 1e-5) << "element #" << i;
+        EXPECT_NEAR(outputBeta, expectedBeta, 1e-5) << "element #" << i;
     }
 }
 
