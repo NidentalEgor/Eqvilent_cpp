@@ -10,6 +10,7 @@
 #include <limits>
 
 static constexpr int NotFound = -1;
+static constexpr double Eps = std::numeric_limits<double>::epsilon();
 
 void readInput(const std::string& filePath, std::vector<double>& inputs)
 {
@@ -53,7 +54,7 @@ double calculateAngle(const Point& leftPoint, const Point& rightPoint)
 {
     const double dx = rightPoint.x - leftPoint.x;
 
-    if (std::fabs(dx) < std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(dx) < Eps) {
         throw std::runtime_error("Division by zero in calculateAngle.");
     }
 
@@ -71,9 +72,9 @@ int classifyPointPosition(const Point& point1, const Point& point2, const Point&
 {
     const double D = (toCheck.x - point1.x) * (point2.y - point1.y) - (toCheck.y - point1.y) * (point2.x - point1.x);
 
-    if(D > 0.0){
+    if(D > Eps){
         return -1; // on the left
-    } else if(D < 0.0){
+    } else if(D < Eps){
         return 1; // on the right
     } else{
         return 0;
